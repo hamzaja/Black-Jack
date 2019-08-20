@@ -1,9 +1,10 @@
-//------------------------- Consts
+//------------------------- Consts----------------------------------
  const divContainer = document.querySelector("#cardContainer")
  const playerCardDiv= document.querySelector("#playerCardDiv")
  const computerCardDiv= document.querySelector("#computerCardDiv")
-
-
+ const buttons = document.getElementById("buttons")
+ const stats = document.getElementById("playerStats")
+ const divForForm = document.getElementById("divForForm")
 //---------------------------------- fetches------------------------------------
 
 //shuffle the deck
@@ -42,20 +43,14 @@ function hitcard(id){
       )
   }
 
-
-  function computercard(card){
+function computercard(card){
     computerCardDiv.innerHTML += `<img src="${card[0].image}">`
     let cardtotal = cardvalue(card , computerCardDiv.dataset.value)
     computerCardDiv.dataset.value = parseInt(computerCardDiv.dataset.value) + cardtotal[0]
     computerCardDiv.querySelector(".computerTotal").innerText = computerCardDiv.dataset.value
     hitcard(computerCardDiv.dataset.deck_id)
   }
-
-
-
 //------------------------------DOM--------------------------------------------
-
-
 
 // render cards
 function renderCards(card, deck_id) {
@@ -103,11 +98,7 @@ else if(parseInt(playerCardDiv.dataset.value) <= 21) {
     divContainer.innerHTML += `<h1> You Lose <h1>`
   }
 
-
-
-
 }
-
 
 // checking the values of card
  function cardvalue(cards, div_value){
@@ -136,27 +127,8 @@ else if(parseInt(playerCardDiv.dataset.value) <= 21) {
 
  }
 
-
-
-
-
-
-
-
-
-
-
-
-
-
-
-
-
-
-
-
 //---------------------------––---––--–--------event listners----------------------
-
+// game related
 playerCardDiv.addEventListener("click" , function(){
   const deck_id  = computerCardDiv.dataset.deck_id
 
@@ -173,18 +145,105 @@ playerCardDiv.addEventListener("click" , function(){
     drawCards(deck_id , 1)
   }
 
-
-
-
-
-
-
-
-
-
-
-
-
-
-
 })
+
+buttons.addEventListener("click", function() {
+    // let playerName = button.name.value
+    if (event.target.id = "login"){
+    loginForm()
+  }
+  else if (event.target.id = "newPlayer"){
+      newuserForm()
+  }
+    buttons.remove()
+
+  })
+
+function newPlayerPost(playerName){
+  fetch("http://localhost:3000/users", {
+    method: "POST",
+    headers: {
+      "Content-Type": "application/json",
+      "Accept": "application/json"
+    },
+    body: JSON.stringify({
+      name: playerName
+    })
+  }).then(res => res.json()).then(userOnDom)
+}
+
+  //  DOM
+// login form
+    function loginForm(){
+      divForForm.innerHTML =
+       `<form method="post" id="formform">
+            <input type="text" name="name" required>
+            <input type="submit" value="Submit">
+        </form>`
+      let form = document.querySelector("#formform")
+      form.addEventListener("submit",function () {
+        event.preventDefault()
+      fetch("http://localhost:3000/users")
+      .then(res => res.json())
+      .then(users => {
+        if (users.find(user => user.name === form.name.value)){
+          let currentUser = users.find(user => user.name === form.name.value)
+          userOnDom(currentUser)
+          form.remove()
+        }
+          else(
+            divForForm.innerHTML += "<p> You messed up, you forgot the username </p>"
+          )
+        })
+      })
+    }
+
+
+//  newuserForm
+function newuserForm(){
+  divForForm.innerHTML =
+   `<form method="post" id="formform">
+        <input type="text" name="name" required>
+        <input type="submit" value="Submit">
+    </form>`
+    let form = document.querySelector("#formform")
+    form.addEventListener("submit",function () {
+      event.preventDefault()
+      newPlayerPost(form.name.value)
+
+    })
+    }
+
+  function userOnDom(data) {
+    document.querySelector("h1").innerText = `Welcome to Black Jack ${data.name}`
+    stats.dataset.id = data.id
+    stats.innerHTML = `<p>Name: ${data.name} </p> <p>Money: ${data.money} </p>
+    <p>Games Won: ${data.win} </p>
+    <p>Games Lost: ${data.lost} </p>
+    <p>Total Games Played: ${data.games.length} </p>
+    <button id="newGame"> New Game </button>
+    `
+  }
+  stats.addEventListener("click" ,function(){
+    if (event.target.id =  "newGame"){
+      event.target.remove();
+      shuffle()
+      newgamepost(stats.dataset.id)
+    }
+  })
+
+
+  // fetch for new game
+  function newgamepost(id){
+    fetch("http://localhost:3000/games",{
+      method: 'POST',
+      headers:{
+        "Content-Type": "application/json",
+        "Accept": "application/json"
+      },
+      body: JSON.stringify({
+        user_id: id
+      })
+    })
+
+  }
