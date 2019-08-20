@@ -14,7 +14,7 @@ function shuffle() {
     drawCards(deck.deck_id)
   })
 }
-shuffle()
+// shuffle()
 
 // draw first hand
 function drawCards(id , value=4){
@@ -22,13 +22,38 @@ function drawCards(id , value=4){
   .then(data => renderCards(data.cards , data.deck_id))
 }
 
+function hitcard(id){
+  if (computerCardDiv.dataset.value < 17){
+    fetch(`https://deckofcardsapi.com/api/deck/${id}/draw/?count=1`)
+    .then(res => res.json())
+    .then(card => computercard(card.cards))
+    }
+    else if (computerCardDiv.dataset.value > 21){
+      divContainer.innerHTML += `<h1> You Won <h1>`
+    }
+    else if (computerCardDiv.dataset.value < playerCardDiv.dataset.value){
+        divContainer.innerHTML += `<h1> You Won <h1>`
+      }
+    else if(computerCardDiv.dataset.value > playerCardDiv.dataset.value){
+        divContainer.innerHTML += `<h1> You Lost <h1>`
+      }
+  else(
+        divContainer.innerHTML += `<h1> Its a Tie <h1>`
+      )
+  }
+
+
+  function computercard(card){
+    computerCardDiv.innerHTML += `<img src="${card[0].image}">`
+    let cardtotal = cardvalue(card , computerCardDiv.dataset.value)
+    computerCardDiv.dataset.value = parseInt(computerCardDiv.dataset.value) + cardtotal[0]
+    computerCardDiv.querySelector(".computerTotal").innerText = computerCardDiv.dataset.value
+    hitcard(computerCardDiv.dataset.deck_id)
+  }
 
 
 
-
-
-
-//------------------------------DOM-------------------------------------------- 
+//------------------------------DOM--------------------------------------------
 
 
 
@@ -46,8 +71,13 @@ function renderCards(card, deck_id) {
    computerCardDiv.dataset.value =   computerValues[1]+computerValues[0]
    playerCardDiv.dataset.value =  playervalues[1]+playervalues[0]
 
-   computerCardDiv.innerHTML += `<p>Compter's Hand</p><img src="${card[0].image}"><img src="${card[2].image}">
-   <p class="computerTotal" > ${computerValues[1]} </p>`
+   computerCardDiv.dataset.img = card[0].image
+   computerCardDiv.innerHTML += `
+   <p>Compter's Hand</p>
+   <p class="computerTotal" > ${computerValues[1]} </p>
+   <img class="imageToBeReplaced" src="http://cdn.shopify.com/s/files/1/0200/7616/products/playing-cards-tally-ho-fan-back-1_grande.png?v=1530155076" width="220" height="312" >
+   <img src="${card[2].image}">
+   `
    playerCardDiv.innerHTML += `
    <button class="standButton"> Stand </button>
    <button class="hitButton" > Hit </button>
@@ -65,9 +95,11 @@ else if(parseInt(playerCardDiv.dataset.value) <= 21) {
   console.log(score)
 
   if( score === 21 ){
+    computerCardDiv.querySelector(".imageToBeReplaced").src = computerCardDiv.dataset.img
     divContainer.innerHTML += `<h1> You Won <h1>`
   }
   else if (score >21){
+    computerCardDiv.querySelector(".imageToBeReplaced").src = computerCardDiv.dataset.img
     divContainer.innerHTML += `<h1> You Lose <h1>`
   }
 
@@ -123,14 +155,6 @@ else if(parseInt(playerCardDiv.dataset.value) <= 21) {
 
 
 
-
-
-
-
-
-
-
-
 //---------------------------––---––--–--------event listners----------------------
 
 playerCardDiv.addEventListener("click" , function(){
@@ -138,7 +162,10 @@ playerCardDiv.addEventListener("click" , function(){
 
   // Stand event
   if(event.target.classList.contains("standButton")){
+    console.log(computerCardDiv.dataset.img)
 
+    computerCardDiv.querySelector(".imageToBeReplaced").src = computerCardDiv.dataset.img
+    hitcard(deck_id)
   }
 
 // Hit event
