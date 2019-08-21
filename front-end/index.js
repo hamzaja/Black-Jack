@@ -149,10 +149,10 @@ playerCardDiv.addEventListener("click" , function(){
 
 buttons.addEventListener("click", function() {
     // let playerName = button.name.value
-    if (event.target.id = "login"){
+    if (event.target.id ===  "login"){
     loginForm()
   }
-  else if (event.target.id = "newPlayer"){
+  else if (event.target.id === "newPlayer"){
       newuserForm()
   }
     buttons.remove()
