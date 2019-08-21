@@ -5,10 +5,17 @@
  const buttons = document.getElementById("buttons")
  const stats = document.getElementById("playerStats")
  const divForForm = document.getElementById("divForForm")
+ const winOverlay= document.getElementById("winOverlay")
+ const winOrLose= document.getElementById("winOrLose")
+ const newGameButton = document.getElementById("restartGame")
+ const logout = document.getElementById("logout")
+ 
 //---------------------------------- fetches------------------------------------
 
 //shuffle the deck
 function shuffle() {
+  playerCardDiv.innerHTML=""
+  computerCardDiv.innerHTML=""
   fetch("https://deckofcardsapi.com/api/deck/new/shuffle/?deck_count=1")
   .then(res => res.json())
   .then(deck => {
@@ -29,18 +36,33 @@ function hitcard(id){
     .then(res => res.json())
     .then(card => computercard(card.cards))
     }
-    else if (computerCardDiv.dataset.value > 21){
-      divContainer.innerHTML += `<h1> You Won <h1>`
+    else if (parseInt(computerCardDiv.dataset.value) > 21){
+      increasewon()
+      console.log("41")
+      winOrLose.innerText = "You won!"
+      winOverlay.style.display = "block";
     }
-    else if (computerCardDiv.dataset.value < playerCardDiv.dataset.value){
-        divContainer.innerHTML += `<h1> You Won <h1>`
+    else if (parseInt(computerCardDiv.dataset.value) < parseInt(playerCardDiv.dataset.value)){
+      console.log(computerCardDiv.dataset.value )
+      console.log(playerCardDiv.dataset.value )
+
+      
+        increasewon()
+        console.log("47")
+        winOrLose.innerText = "You won!"
+        winOverlay.style.display = "block";
       }
-    else if(computerCardDiv.dataset.value > playerCardDiv.dataset.value){
-        divContainer.innerHTML += `<h1> You Lost <h1>`
+    else if(parseInt(computerCardDiv.dataset.value) > parseInt(playerCardDiv.dataset.value)){
+      increaselost()
+      console.log("53")
+      winOrLose.innerText = "You lost!"
+      winOverlay.style.display = "block";
       }
-  else(
-        divContainer.innerHTML += `<h1> Its a Tie <h1>`
-      )
+  else if (computerCardDiv.dataset.value === playerCardDiv.dataset.value) {
+    winOrLose.innerText = "It's a tie! What are the odds? 🧐"
+    winOverlay.style.display = "block";}
+  
+  
   }
 
 function computercard(card){
@@ -91,11 +113,18 @@ else if(parseInt(playerCardDiv.dataset.value) <= 21) {
 
   if( score === 21 ){
     computerCardDiv.querySelector(".imageToBeReplaced").src = computerCardDiv.dataset.img
-    divContainer.innerHTML += `<h1> You Won <h1>`
+    increasewon()
+    console.log("113")
+    winOrLose.innerText = "You won!"
+        winOverlay.style.display = "block";
+        
   }
   else if (score >21){
     computerCardDiv.querySelector(".imageToBeReplaced").src = computerCardDiv.dataset.img
-    divContainer.innerHTML += `<h1> You Lose <h1>`
+    increaselost()
+    winOrLose.innerText = "You Lost!"
+        winOverlay.style.display = "block";
+
   }
 
 }
@@ -198,6 +227,19 @@ function newPlayerPost(playerName){
       })
     }
 
+    newGameButton.addEventListener("click", function(){
+      winOverlay.style.display = "none";
+      
+      shuffle()
+      newgamepost(stats.dataset.id)
+
+
+    })
+
+    logout.addEventListener("click", function() {
+      location.reload();
+    })
+
 
 //  newuserForm
 function newuserForm(){
@@ -217,16 +259,19 @@ function newuserForm(){
   function userOnDom(data) {
     document.querySelector("h1").innerText = `Welcome to Black Jack ${data.name}`
     stats.dataset.id = data.id
+    stats.dataset.win = data.win
+    stats.dataset.lost = data.lost
+    stats.dataset.gamesplayed = data.games.length
     stats.innerHTML = `<p>Name: ${data.name} </p> <p>Money: ${data.money} </p>
-    <p>Games Won: ${data.win} </p>
-    <p>Games Lost: ${data.lost} </p>
-    <p>Total Games Played: ${data.games.length} </p>
-    <button id="newGame"> New Game </button>
+    <p id="win" >Games Won: ${data.win} </p>
+    <p id="lost">Games Lost: ${data.lost} </p>
+    <p id = "totalGamesPlayed">Total Games Played: ${data.games.length} </p>
+    <button id="newGamebutton"> New Game </button>
     `
   }
   stats.addEventListener("click" ,function(){
-    if (event.target.id =  "newGame"){
-      event.target.remove();
+    if (event.target.id ===  "newGamebutton"){
+      event.target.remove()
       shuffle()
       newgamepost(stats.dataset.id)
     }
@@ -235,6 +280,10 @@ function newuserForm(){
 
   // fetch for new game
   function newgamepost(id){
+    let total = parseInt(stats.dataset.gamesplayed) + 1
+    stats.dataset.gamesplayed = total
+    stats.querySelector("#totalGamesPlayed").innerText = `Total Games Played: ${total}`
+    console.log("new game post")
     fetch("http://localhost:3000/games",{
       method: 'POST',
       headers:{
@@ -246,4 +295,51 @@ function newuserForm(){
       })
     })
 
+  }
+
+
+  function increasewon(){
+    console.log("increse win")
+
+    wins = stats.dataset.win
+    new_wins = parseInt(wins) + 1
+    stats.dataset.win = new_wins
+
+    document.getElementById("win").innerText = `Games Won: ${new_wins}`
+    // debugger
+
+    fetch(`http://localhost:3000/users/${stats.dataset.id}`, {
+      method: "PATCH", 
+      headers: {
+        "Content-Type": "application/json" ,
+        "Accept": "application/json"
+      },
+      body: JSON.stringify({
+        win: new_wins
+      })
+    })
+  }
+
+  function increaselost(){
+    console.log("increse lost")
+    losts = stats.dataset.lost
+    console.log(losts)
+    new_losts = parseInt(losts) + 1
+    console.log(new_losts)
+    document.getElementById("lost").innerText = `Games Lost: ${new_losts}`
+    stats.dataset.lost = new_losts
+    // debugger
+
+    fetch(`http://localhost:3000/users/${stats.dataset.id}`, {
+      method: "PATCH", 
+      headers: {
+        "Content-Type": "application/json" ,
+        "Accept": "application/json"
+      },
+      body: JSON.stringify({
+        lost: new_losts
+      })
+    })
+    .then(res=> res.json())
+    .then(console.log)
   }
