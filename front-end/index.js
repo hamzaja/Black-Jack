@@ -16,7 +16,7 @@
   function shuffle() {
   playerCardDiv.innerHTML=""
   computerCardDiv.innerHTML=""
-  fetch("https://deckofcardsapi.com/api/deck/new/shuffle/?deck_count=10")
+  fetch("https://deckofcardsapi.com/api/deck/new/shuffle/?deck_count=6")
   .then(res => res.json())
   .then(deck => {
     drawCards(deck.deck_id)
@@ -26,12 +26,15 @@
 
 // draw first hand
   function drawCards(id , value=4){
-  fetch(`https://deckofcardsapi.com/api/deck/hen75mts6ivr/draw/?count=${value}`).then(res => res.json())
+  fetch(`https://deckofcardsapi.com/api/deck/${id}/draw/?count=${value}`).then(res => res.json())
   .then(data => renderCards(data.cards , data.deck_id))
 }
 
   function hitcard(id){
-  if (computerCardDiv.dataset.value < 17){
+    if (computerCardDiv.dataset.value > 21 && computerCardDiv.dataset.hasAce ==="true"){
+      computerCardDiv.dataset.value -= 10;
+    }
+    if (computerCardDiv.dataset.value < 17){
     fetch(`https://deckofcardsapi.com/api/deck/${id}/draw/?count=1`)
     .then(res => res.json())
     .then(card => computercard(card.cards))
@@ -42,7 +45,7 @@
       winOrLose.innerText = "You won!"
       winOverlay.style.display = "block";
     }
-    else if (parseInt(computerCardDiv.dataset.value) < parseInt(playerCardDiv.dataset.value)){
+    else if (parseInt(computerCardDiv.dataset.value) < parseInt(playerCardDiv.dataset.value) && !(parseInt(computerCardDiv.dataset.value) > 21)){
       console.log(computerCardDiv.dataset.value )
       console.log(playerCardDiv.dataset.value )
 
@@ -168,15 +171,15 @@ function renderCards(card, deck_id) {
    computerCardDiv.dataset.deck_id= deck_id
    playerCardDiv.dataset.deck_id= deck_id
    if(parseInt(computerValues[1])+ parseInt(computerValues[0]) === 22){
-     computerCardDiv.dataset.value = 13
+     computerCardDiv.dataset.value = 12
    }
    else(computerCardDiv.dataset.value =   computerValues[1]+computerValues[0])
 
    if (parseInt(playervalues[1])+parseInt(playervalues[0]) === 22)
    {
-      playerCardDiv.dataset.value =  13
+      playerCardDiv.dataset.value =  12
   }
-  else (playerCardDiv.dataset.value = playervalues[1]+playervalues[0])
+    else (playerCardDiv.dataset.value = playervalues[1]+playervalues[0])
 
    computerCardDiv.dataset.hasAce = "false"
    playerCardDiv.dataset.hasAce = "false"
@@ -204,15 +207,18 @@ function renderCards(card, deck_id) {
 }
 else if(parseInt(playerCardDiv.dataset.value) <= 21) {
   let playervalues = cardvalue(card)
-  playerCardDiv.querySelector(".playerTotal").innerText = parseInt(playerCardDiv.querySelector(".playerTotal").innerText) + playervalues[0]
+  playerCardDiv.querySelector(".playerTotal").innerText = parseInt(playerCardDiv.dataset.value) +  playervalues[0]
   if (parseInt(playerCardDiv.dataset.value) + playervalues[0] >21 && playerCardDiv.dataset.hasAce === "true"){
     console.log("210")
     playerCardDiv.dataset.value = (parseInt(playerCardDiv.dataset.value) + playervalues[0]) - 10
 }
-else (playerCardDiv.dataset.value = parseInt(playerCardDiv.dataset.value) + playervalues[0])
+else {playerCardDiv.dataset.value = parseInt(playerCardDiv.dataset.value) + playervalues[0];
+  playerCardDiv.querySelector(".playerTotal").innerText = playerCardDiv.dataset.value
+  }
   playerCardDiv.innerHTML += `<img src="${card[0].image}">`
-}
+  }
   let score = parseInt(playerCardDiv.dataset.value)
+  playerCardDiv.querySelector(".playerTotal").innerText = score
   console.log(score)
 
   if( score === 21 ){
@@ -245,10 +251,12 @@ else (playerCardDiv.dataset.value = parseInt(playerCardDiv.dataset.value) + play
        value = 10;
    }
    else if(card.value === "ACE"){
-     if (div_value + 11 < 21 ){
+      if (div_value + 11 < 21 ){
        value = 11
      }
-     else(value = 1)
+     else{value = 1;
+       computerCardDiv.dataset.hasAce ="false"
+     }
    }
    else(
      value = parseInt(card.value)
