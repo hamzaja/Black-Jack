@@ -16,11 +16,18 @@ class UsersController < ApplicationController
       render json: @user
     end
 
+  def update
+    @user = User.update(user_params)
+    render json: @user
+  end
+
+
   def destroy
       @user = User.destroy(params[:id])
       render json: @user
     end
   end
+
 
 private
 
