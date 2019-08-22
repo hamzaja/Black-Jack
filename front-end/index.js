@@ -34,8 +34,9 @@
   function hitcard(id){
     if (computerCardDiv.dataset.value > 21 && computerCardDiv.dataset.hasAce === "true"){
       computerCardDiv.dataset.value -= 10;
+      computerCardDiv.dataset.hasAce ="false"
     }
-    if (computerCardDiv.dataset.value < 17 && computerCardDiv.dataset.hasAce === "false"){
+    if (computerCardDiv.dataset.value < 17 ){
     fetch(`https://deckofcardsapi.com/api/deck/${id}/draw/?count=1`)
     .then(res => res.json())
     .then(card => computercard(card.cards))
@@ -291,6 +292,7 @@ else {playerCardDiv.dataset.value = parseInt(playerCardDiv.dataset.value) + play
      let form = document.querySelector("#formform")
      form.addEventListener("submit",function () {
        event.preventDefault()
+       form.remove()
        newPlayerPost(form.name.value)
 
      })
@@ -298,9 +300,12 @@ else {playerCardDiv.dataset.value = parseInt(playerCardDiv.dataset.value) + play
 
 //---------------------------––---––--–--------event listners----------------------
 // game related
+
+
 playerCardDiv.addEventListener("click" , function(){
   const deck_id  = computerCardDiv.dataset.deck_id
 
+  
   // Stand event
   if(event.target.classList.contains("standButton")){
     console.log(computerCardDiv.dataset.img)
@@ -381,7 +386,13 @@ buttons.addEventListener("click", function() {
     <p id = "totalGamesPlayed">Total Games Played: ${data.games.length} </p>
     <button id="newGamebutton"> New Game </button>
     `
+    if (parseInt(stats.dataset.money) < 0) {
+      console.log("ekfjslkjf")
+      stats.innerHTML += `<h1> You owe us money. </h1>`
+    }
   }
+
+ 
   stats.addEventListener("click" ,function(){
     if (event.target.id ===  "newGamebutton"){
       event.target.remove()
