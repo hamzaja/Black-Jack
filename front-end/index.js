@@ -9,7 +9,8 @@
  const winOrLose= document.getElementById("winOrLose")
  const newGameButton = document.getElementById("restartGame")
  const logout = document.getElementById("logout")
-
+ const imagesDiv = document.querySelector(".imagesDiv")
+ let betAmount = 0;
 //---------------------------------- fetches------------------------------------
 
 //shuffle the deck
@@ -31,38 +32,40 @@
 }
 
   function hitcard(id){
-    if (computerCardDiv.dataset.value > 21 && computerCardDiv.dataset.hasAce ==="true"){
+    if (computerCardDiv.dataset.value > 21 && computerCardDiv.dataset.hasAce === "true"){
       computerCardDiv.dataset.value -= 10;
     }
-    if (computerCardDiv.dataset.value < 17){
+    if (computerCardDiv.dataset.value < 17 && computerCardDiv.dataset.hasAce === "false"){
     fetch(`https://deckofcardsapi.com/api/deck/${id}/draw/?count=1`)
     .then(res => res.json())
     .then(card => computercard(card.cards))
     }
     else if (parseInt(computerCardDiv.dataset.value) > 21){
       increasewon()
+      updateMoney(1)
       console.log("41")
-      winOrLose.innerText = "You won!"
+      winOrLose.innerText = `Yayy, You Won ${2*(betAmount)}`
       winOverlay.style.display = "block";
     }
     else if (parseInt(computerCardDiv.dataset.value) < parseInt(playerCardDiv.dataset.value) && !(parseInt(computerCardDiv.dataset.value) > 21)){
       console.log(computerCardDiv.dataset.value )
       console.log(playerCardDiv.dataset.value )
-
-
+      updateMoney(1)
         increasewon()
         console.log("47")
-        winOrLose.innerText = "You won!"
+        winOrLose.innerText = `Yayy, You Won ${2*(betAmount)}`
         winOverlay.style.display = "block";
       }
     else if(parseInt(computerCardDiv.dataset.value) > parseInt(playerCardDiv.dataset.value)){
       increaselost()
+      updateMoney(-1)
       console.log("53")
-      winOrLose.innerText = "You lost!"
+      winOrLose.innerText = `You Lost! ${betAmount}$`
       winOverlay.style.display = "block";
       }
   else if (computerCardDiv.dataset.value === playerCardDiv.dataset.value) {
     winOrLose.innerText = "It's a tie! What are the odds? 🧐"
+    updateMoney(1)
     winOverlay.style.display = "block";}
 
 
@@ -182,12 +185,12 @@ function renderCards(card, deck_id) {
     else (playerCardDiv.dataset.value = playervalues[1]+playervalues[0])
 
    computerCardDiv.dataset.hasAce = "false"
-   playerCardDiv.dataset.hasAce = "false"
+     playerCardDiv.dataset.hasAce = "false"
    if (card[0].value === "ACE" || card[2].value === "ACE" ){
      computerCardDiv.dataset.hasAce = "true"
    }
    if (card[1].value ==="ACE" || card[3].value === "ACE" ){
-     playerCardDiv.dataset.hasAce = "true"
+       playerCardDiv.dataset.hasAce = "true"
    }
 
    computerCardDiv.dataset.img = card[0].image
@@ -204,13 +207,21 @@ function renderCards(card, deck_id) {
    <p class= "playerTotal" >${ playervalues[1] + playervalues[0] }</p>
    <img src="${card[1].image}"><img src="${card[3].image}">
 `
+  imagesDiv.innerHTML = `
+  <p class ="showBetOnDOM">Total Bet : ${betAmount}  <p>
+  <img class="imageFor5" src='images/5.png'></img>
+  <img class="imageFor25" src='images/25.png'></img>
+  <img class="imageFor50" src='images/50.png'></img>
+  <img class="imageFor100" src='images/100.png'></img>
+  `
 }
 else if(parseInt(playerCardDiv.dataset.value) <= 21) {
   let playervalues = cardvalue(card)
   playerCardDiv.querySelector(".playerTotal").innerText = parseInt(playerCardDiv.dataset.value) +  playervalues[0]
-  if (parseInt(playerCardDiv.dataset.value) + playervalues[0] >21 && playerCardDiv.dataset.hasAce === "true"){
+    if (parseInt(playerCardDiv.dataset.value) + playervalues[0] >21 && playerCardDiv.dataset.hasAce === "true"){
     console.log("210")
     playerCardDiv.dataset.value = (parseInt(playerCardDiv.dataset.value) + playervalues[0]) - 10
+      playerCardDiv.dataset.hasAce ="false"
 }
 else {playerCardDiv.dataset.value = parseInt(playerCardDiv.dataset.value) + playervalues[0];
   playerCardDiv.querySelector(".playerTotal").innerText = playerCardDiv.dataset.value
@@ -223,16 +234,17 @@ else {playerCardDiv.dataset.value = parseInt(playerCardDiv.dataset.value) + play
 
   if( score === 21 ){
     computerCardDiv.querySelector(".imageToBeReplaced").src = computerCardDiv.dataset.img
-    increasewon()
-    console.log("113")
-    winOrLose.innerText = "You won!"
+    increasewon();
+    updateMoney(1.5);
+    winOrLose.innerText = `OHHH ITS A BLACK JACK, You Won ${2.5*(betAmount)}`
         winOverlay.style.display = "block";
 
   }
   else if (score >21){
     computerCardDiv.querySelector(".imageToBeReplaced").src = computerCardDiv.dataset.img
     increaselost()
-    winOrLose.innerText = "You Lost!"
+    updateMoney(-1)
+    winOrLose.innerText = `You Lost! ${betAmount}$`
         winOverlay.style.display = "block";
 
   }
@@ -343,7 +355,7 @@ buttons.addEventListener("click", function() {
 
     newGameButton.addEventListener("click", function(){
       winOverlay.style.display = "none";
-
+      betAmount = 0;
       shuffle()
       newgamepost(stats.dataset.id)
 
@@ -361,8 +373,9 @@ buttons.addEventListener("click", function() {
     stats.dataset.id = data.id
     stats.dataset.win = data.win
     stats.dataset.lost = data.lost
+    stats.dataset.money = data.money
     stats.dataset.gamesplayed = data.games.length
-    stats.innerHTML = `<p>Name: ${data.name} </p> <p>Money: ${data.money} </p>
+    stats.innerHTML = `<p>Name: ${data.name} </p> <p class="moneyClass">Money: ${data.money} </p>
     <p id="win" >Games Won: ${data.win} </p>
     <p id="lost">Games Lost: ${data.lost} </p>
     <p id = "totalGamesPlayed">Total Games Played: ${data.games.length} </p>
@@ -376,3 +389,46 @@ buttons.addEventListener("click", function() {
       newgamepost(stats.dataset.id)
     }
   })
+
+
+
+  // addEventListener for imagesDiv
+  imagesDiv.addEventListener("click", function(){
+
+    if(event.target.classList.contains("imageFor5")){
+      betAmount += 5
+    }
+
+    if(event.target.classList.contains("imageFor25")){
+      betAmount += 25
+    }
+
+    if(event.target.classList.contains("imageFor50")){
+      betAmount += 50
+    }
+
+    if(event.target.classList.contains("imageFor100")){
+      betAmount += 100
+    }
+    document.querySelector(".showBetOnDOM").innerText = `Total Bet:${betAmount}`
+    document.querySelector('.moneyClass').innerText = `Money: ${parseInt(stats.dataset.money)-betAmount}`
+
+  })
+
+
+function updateMoney(multiplyer=0){
+  let newMoney = parseInt(stats.dataset.money) + betAmount * multiplyer
+  stats.dataset.money = newMoney
+  console.log(newMoney)
+  document.querySelector(".moneyClass").innerText = `Money: ${newMoney}`
+    fetch(`http://localhost:3000/users/${stats.dataset.id}`,{
+      method: 'PATCH',
+      headers: {
+        'Content-Type': 'application/json',
+        'Accept': 'application/json'
+      },
+      body: JSON.stringify({
+        money: newMoney
+      })
+    })
+  }
