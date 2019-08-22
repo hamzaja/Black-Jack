@@ -12,8 +12,65 @@
     z-index: 2; /* Specify a stack order in case you're using a different order for other elements */
     cursor: pointer; /* Add a pointer on hover */
     color: white;
-}
+    }
 
 body{
+      color: white;
+    }
+
+.imagesDiv{
+
+    margin: 0 15px 0 0;
+    position:absolute;
+    top:330px;
+    left:1200px;
+    right: 0;
+    bottom: 0;
+}
+.imageFor5:hover{
+  /* background-color: #f4511e; */
+  border: none;
   color: white;
+  padding: 16px 32px;
+  text-align: center;
+  font-size: 16px;
+  margin: 4px 2px;
+  opacity: 0.6;
+  transition: 0.3s;
+}
+
+.imageFor25:hover{
+  /* background-color: #f4511e; */
+  border: none;
+  color: white;
+  padding: 16px 32px;
+  text-align: center;
+  font-size: 16px;
+  margin: 4px 2px;
+  opacity: 0.6;
+  transition: 0.3s;
+}
+
+.imageFor50:hover{
+  /* background-color: #f4511e; */
+  border: none;
+  color: white;
+  padding: 16px 32px;
+  text-align: center;
+  font-size: 16px;
+  margin: 4px 2px;
+  opacity: 0.6;
+  transition: 0.3s;
+}
+
+.imageFor100:hover{
+  /* background-color: #f4511e; */
+  border: none;
+  color: white;
+  padding: 16px 32px;
+  text-align: center;
+  font-size: 16px;
+  margin: 4px 2px;
+  opacity: 0.6;
+  transition: 0.3s;
 }
