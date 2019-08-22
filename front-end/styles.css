@@ -16,6 +16,7 @@
 
 body{
       color: white;
+      font-style: oblique;
     }
 
 .imagesDiv{
@@ -73,4 +74,10 @@ body{
   margin: 4px 2px;
   opacity: 0.6;
   transition: 0.3s;
+}
+
+button {
+  background-color: white;
+  color: red;
+
 }
