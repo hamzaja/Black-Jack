@@ -386,7 +386,7 @@ buttons.addEventListener("click", function() {
 
 
   function userOnDom(data) {
-    document.querySelector("h1").innerText = `Welcome to Black Jack ${data.name}`
+    document.querySelector("h1").innerText = `Welcome to Black Jack, ${data.name}`
     stats.dataset.id = data.id
     stats.dataset.win = data.win
     stats.dataset.lost = data.lost
@@ -399,14 +399,16 @@ buttons.addEventListener("click", function() {
     <button id="newGamebutton"> New Game </button>
     `
     if (parseInt(stats.dataset.money) < 0) {
-      console.log("ekfjslkjf")
-      stats.innerHTML += `<h1> You owe us money. </h1>`
+      stats.innerHTML += `<div class="youOweUsMoney"><h1> You owe us money. $${stats.dataset.money}😱 </h1>
+      <img src= "https://media3.giphy.com/media/fM9tOmvyMrXH2/giphy.gif">
+      </div>`
     }
   }
 
 
   stats.addEventListener("click" ,function(){
     if (event.target.id ===  "newGamebutton"){
+        if(stats.querySelector(".youOweUsMoney")){stats.querySelector(".youOweUsMoney").remove()}
       event.target.remove()
       shuffle()
       newgamepost(stats.dataset.id)
@@ -442,7 +444,6 @@ buttons.addEventListener("click", function() {
 function updateMoney(multiplyer=0){
   let newMoney = parseInt(stats.dataset.money) + betAmount * multiplyer
   stats.dataset.money = newMoney
-  console.log(newMoney)
   document.querySelector(".moneyClass").innerText = `Money: ${newMoney}`
     fetch(`http://localhost:3000/users/${stats.dataset.id}`,{
       method: 'PATCH',
