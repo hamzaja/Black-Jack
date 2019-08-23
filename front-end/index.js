@@ -206,7 +206,18 @@ function renderCards(card, deck_id) {
    <button class="hitButton" > Hit </button>
    <h2>players Hand</h2>
    <p class= "playerTotal" >${ playervalues[1] + playervalues[0] }</p>
-   <img src="${card[1].image}"><img src="${card[3].image}">
+      <div class="flip-card">
+      <div class="flip-card-inner">
+        <div class="flip-card-front">
+        <img class="imageToBeReplaced" src="http://cdn.shopify.com/s/files/1/0200/7616/products/playing-cards-tally-ho-fan-back-1_grande.png?v=1530155076" width="220" height="312">
+        </div>
+        <div class="flip-card-back">
+        <img src="${card[1].image}">
+        </div>
+      </div>
+    </div>
+   
+   <img src="${card[3].image}">
 `
   imagesDiv.innerHTML = `
   <p class ="showBetOnDOM">Total Bet : ${betAmount}  <p>
@@ -374,7 +385,7 @@ buttons.addEventListener("click", function() {
 
 
   function userOnDom(data) {
-    document.querySelector("h1").innerText = `Welcome to Black Jack ${data.name}`
+    document.querySelector("h1").innerText = `Welcome to Black Jack, ${data.name}`
     stats.dataset.id = data.id
     stats.dataset.win = data.win
     stats.dataset.lost = data.lost
