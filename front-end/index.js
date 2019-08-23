@@ -10,6 +10,7 @@
  const newGameButton = document.getElementById("restartGame")
  const logout = document.getElementById("logout")
  const imagesDiv = document.querySelector(".imagesDiv")
+ const flipdiv = document.querySelector(".flipdiv")
  let betAmount = 0;
 //---------------------------------- fetches------------------------------------
 
@@ -37,9 +38,12 @@
       computerCardDiv.dataset.hasAce ="false"
     }
     if (computerCardDiv.dataset.value < 17 ){
-    fetch(`https://deckofcardsapi.com/api/deck/${id}/draw/?count=1`)
-    .then(res => res.json())
-    .then(card => computercard(card.cards))
+      setTimeout(function(){
+        fetch(`https://deckofcardsapi.com/api/deck/${id}/draw/?count=1`)
+        .then(res => res.json())
+        .then(card => computercard(card.cards))
+      }, 1000)
+
     }
     else if (parseInt(computerCardDiv.dataset.value) > 21){
       increasewon()
@@ -60,18 +64,19 @@
     else if(parseInt(computerCardDiv.dataset.value) > parseInt(playerCardDiv.dataset.value)){
       increaselost()
       updateMoney(-1)
-      console.log("53")
-      winOrLose.innerText = `You Lost! ${betAmount}$`
-      winOverlay.style.display = "block";
+      setTimeout(function(){
+        winOrLose.innerText = `You Lost! ${betAmount}$`
+        winOverlay.style.display = "block";
+      }, 2000)
       }
   else if (computerCardDiv.dataset.value === playerCardDiv.dataset.value) {
-    winOrLose.innerText = "It's a tie! What are the odds? 🧐"
     updateMoney(1)
-    winOverlay.style.display = "block";}
+    setTimeout(function(){
+      winOrLose.innerText = "It's a tie! What are the odds? 🧐"
+      winOverlay.style.display = "block" }  , 2000)
 
-
-  }
-
+        }
+    }
   function computercard(card){
     computerCardDiv.innerHTML += `<img src="${card[0].image}">`
     let cardtotal = cardvalue(card , computerCardDiv.dataset.value)
@@ -202,8 +207,10 @@ function renderCards(card, deck_id) {
    <img src="${card[2].image}">
    `
    playerCardDiv.innerHTML += `
+   <div class ="hitAndStandButtonDiv">
    <button class="standButton"> Stand </button>
    <button class="hitButton" > Hit </button>
+   </div>
    <h2>players Hand</h2>
    <p class= "playerTotal" >${ playervalues[1] + playervalues[0] }</p>
       <div class="flip-card">
@@ -245,14 +252,17 @@ else {playerCardDiv.dataset.value = parseInt(playerCardDiv.dataset.value) + play
   console.log(score)
 
   if( score === 21 ){
-    computerCardDiv.querySelector(".imageToBeReplaced").src = computerCardDiv.dataset.img
-    increasewon();
-    updateMoney(1.5);
-    winOrLose.innerText = `OHHH ITS A BLACK JACK, You Won ${2.5*(betAmount)}`
-        winOverlay.style.display = "block";
+    setTimeout(function(){
+      computerCardDiv.querySelector(".imageToBeReplaced").src = computerCardDiv.dataset.img
+      increasewon();
+      updateMoney(1.5);
+      winOrLose.innerText = `OHHH ITS A BLACK JACK, You Won ${2.5*(betAmount)}`
+      winOverlay.style.display = "block";
+} , 2000)
 
   }
   else if (score >21){
+
     computerCardDiv.querySelector(".imageToBeReplaced").src = computerCardDiv.dataset.img
     increaselost()
     updateMoney(-1)
@@ -298,10 +308,11 @@ else {playerCardDiv.dataset.value = parseInt(playerCardDiv.dataset.value) + play
    divForForm.innerHTML =
     `<form method="post" id="formform">
          <input type="text" name="name" required>
-         <input type="submit" value="Submit">
+         <input class="forminputsubmitbutton" type="submit" value="Submit">
      </form>`
      let form = document.querySelector("#formform")
      form.addEventListener("submit",function () {
+       flipdiv.remove()
        event.preventDefault()
        form.remove()
        newPlayerPost(form.name.value)
@@ -316,7 +327,7 @@ else {playerCardDiv.dataset.value = parseInt(playerCardDiv.dataset.value) + play
 playerCardDiv.addEventListener("click" , function(){
   const deck_id  = computerCardDiv.dataset.deck_id
 
-  
+
   // Stand event
   if(event.target.classList.contains("standButton")){
     console.log(computerCardDiv.dataset.img)
@@ -353,6 +364,7 @@ buttons.addEventListener("click", function() {
         </form>`
       let form = document.querySelector("#formform")
       form.addEventListener("submit",function () {
+        flipdiv.remove()
         event.preventDefault()
       fetch("http://localhost:3000/users")
       .then(res => res.json())
@@ -403,7 +415,7 @@ buttons.addEventListener("click", function() {
     }
   }
 
- 
+
   stats.addEventListener("click" ,function(){
     if (event.target.id ===  "newGamebutton"){
       event.target.remove()
