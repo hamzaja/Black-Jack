@@ -19,6 +19,10 @@ body{
       font-style: oblique;
     }
 
+#playerStats { 
+  display: inline;
+}
+
 .imagesDiv{
 
     margin: 0 15px 0 0;
@@ -81,6 +85,7 @@ button {
   color: red;
 
 }
+
 button{
 color: #20bf6b !important;
 text-transform: uppercase;
@@ -164,8 +169,6 @@ color:yellow !important;
 font-weight: 700 !important;
 letter-spacing: 3px;
 background: none;
--webkit-box-shadow: 0px 5px 40px -10px rgba(0,0,0,0.57);
--moz-box-shadow: 0px 5px 40px -10px rgba(0,0,0,0.57);
 transition: all 0.3s ease 0s;
 }
 
@@ -184,6 +187,7 @@ p:hover{
 
 .flipdiv{
   display: flex;
+  align-content: center;
   margin: 0 0 0 0;
   position:absolute;
   top:200;
@@ -206,6 +210,7 @@ p:hover{
   width: 100%;
   height: 100%;
   text-align: center;
+
   transition: transform 2.5s;
   transform-style: preserve-3d;
 }
@@ -231,6 +236,7 @@ p:hover{
 
 /* Style the back side */
 .flip-card-back {
+
   background-color: white;
   color: black;
   transform: rotateY(180deg);
