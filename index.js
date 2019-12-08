@@ -1,4 +1,5 @@
 //------------------------- Consts----------------------------------
+fetch("https://larmzablackjack.herokuapp.com/games")
  const divContainer = document.querySelector("#cardContainer")
  const playerCardDiv= document.querySelector("#playerCardDiv")
  const computerCardDiv= document.querySelector("#computerCardDiv")
@@ -203,7 +204,7 @@ function renderCards(card, deck_id) {
    computerCardDiv.innerHTML += `
    <h2>Compter's Hand</h2>
    <p class="computerTotal" > ${computerValues[1]} </p>
-   <img class="imageToBeReplaced" src="https://images-na.ssl-images-amazon.com/images/I/81wa8fGJ0oL._SY606_.jpg" width="220" height="312" >
+   <img class="imageToBeReplaced" src="images/playing-card-back.png" width="220" height="312" >
    <img src="${card[2].image}">
    `
    playerCardDiv.innerHTML += `
