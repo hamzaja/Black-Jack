@@ -1,4 +1,5 @@
 //------------------------- Consts----------------------------------
+fetch("https://larmzablackjack.herokuapp.com/games")
  const divContainer = document.querySelector("#cardContainer")
  const playerCardDiv= document.querySelector("#playerCardDiv")
  const computerCardDiv= document.querySelector("#computerCardDiv")
@@ -88,7 +89,7 @@
 
 
   function newPlayerPost(playerName){
-    fetch("http://localhost:3000/users", {
+    fetch("https://larmzablackjack.herokuapp.com/users", {
       method: "POST",
       headers: {
         "Content-Type": "application/json",
@@ -108,7 +109,7 @@
     stats.dataset.gamesplayed = total
     stats.querySelector("#totalGamesPlayed").innerText = `Total Games Played: ${total}`
     console.log("new game post")
-    fetch("http://localhost:3000/games",{
+    fetch("https://larmzablackjack.herokuapp.com/games",{
       method: 'POST',
       headers:{
         "Content-Type": "application/json",
@@ -131,7 +132,7 @@
     document.getElementById("win").innerText = `Games Won: ${new_wins}`
     // debugger
 
-    fetch(`http://localhost:3000/users/${stats.dataset.id}`, {
+    fetch(`https://larmzablackjack.herokuapp.com/users/${stats.dataset.id}`, {
       method: "PATCH",
       headers: {
         "Content-Type": "application/json" ,
@@ -153,7 +154,7 @@
     stats.dataset.lost = new_losts
     // debugger
 
-    fetch(`http://localhost:3000/users/${stats.dataset.id}`, {
+    fetch(`https://larmzablackjack.herokuapp.com/users/${stats.dataset.id}`, {
       method: "PATCH",
       headers: {
         "Content-Type": "application/json" ,
@@ -203,7 +204,7 @@ function renderCards(card, deck_id) {
    computerCardDiv.innerHTML += `
    <h2>Compter's Hand</h2>
    <p class="computerTotal" > ${computerValues[1]} </p>
-   <img class="imageToBeReplaced" src="http://cdn.shopify.com/s/files/1/0200/7616/products/playing-cards-tally-ho-fan-back-1_grande.png?v=1530155076" width="220" height="312" >
+   <img class="imageToBeReplaced" src="images/playing-card-back.png" width="220" height="312" >
    <img src="${card[2].image}">
    `
    playerCardDiv.innerHTML += `
@@ -355,7 +356,7 @@ buttons.addEventListener("click", function() {
       form.addEventListener("submit",function () {
         flipdiv.remove()
         event.preventDefault()
-      fetch("http://localhost:3000/users")
+      fetch("https://larmzablackjack.herokuapp.com/users")
       .then(res => res.json())
       .then(users => {
         if (users.find(user => user.name === form.name.value)){
@@ -445,7 +446,7 @@ function updateMoney(multiplyer=0){
   let newMoney = parseInt(stats.dataset.money) + betAmount * multiplyer
   stats.dataset.money = newMoney
   document.querySelector(".moneyClass").innerText = `Money: ${newMoney}`
-    fetch(`http://localhost:3000/users/${stats.dataset.id}`,{
+    fetch(`https://larmzablackjack.herokuapp.com/users/${stats.dataset.id}`,{
       method: 'PATCH',
       headers: {
         'Content-Type': 'application/json',
