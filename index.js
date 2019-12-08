@@ -214,7 +214,12 @@ function renderCards(card, deck_id) {
    </div>
    <h2>players Hand</h2>
    <p class= "playerTotal" >${ playervalues[1] + playervalues[0] }</p>
-   <img src="${card[1].image}"><img src="${card[3].image}">
+    
+        <img src="${card[1].image}">
+    
+ 
+   
+   <img src="${card[3].image}">
 `
   imagesDiv.innerHTML = `
   <p class ="showBetOnDOM">Total Bet : ${betAmount}  <p>
