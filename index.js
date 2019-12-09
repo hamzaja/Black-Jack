@@ -1,3 +1,4 @@
+fetch("https://larmzablackjack.herokuapp.com/games")
 //------------------------- Consts----------------------------------
  const divContainer = document.querySelector("#cardContainer")
  const playerCardDiv= document.querySelector("#playerCardDiv")
